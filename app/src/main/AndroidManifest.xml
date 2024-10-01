@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" tools:targetApi="33"/>
+
+    <!-- 하드웨어 기능 요구 사항 설정 -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.location.gps" android:required="true" />
+    <uses-feature android:name="android.hardware.camera.flash" android:required="false" />
+
+    <!-- SDK 버전 설정 -->
+    <uses-sdk
+        android:minSdkVersion="21"
+        android:targetSdkVersion="34"
+        tools:ignore="GradleOverrides,OldTargetApi" />
+
+    <application
+        android:label="모두의 딜리버리"
+        android:icon="@mipmap/ic_launcher_foreground"
+        tools:replace="label, icon"
+        android:theme="@style/Theme.MyApplication">
+
+
+    <!-- SplashActivity 설정 -->
+        <activity
+            android:name="com.delivery.admin.SplashActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Firebase Messaging Service 설정 -->
+        <service
+            android:name="com.delivery.admin.push.MyFirebaseMessagingService"
+            android:exported="false"
+            tools:ignore="Instantiatable">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <!-- MainActivity 설정 -->
+        <activity android:name="com.delivery.admin.MainActivity" android:exported="true" >
+            <intent-filter>
+                <action android:name="OPEN_LINK_ACTIVITY" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

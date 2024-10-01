@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "487111455987",
+    "project_id": "delivery-admin-6df6a",
+    "storage_bucket": "delivery-admin-6df6a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:487111455987:android:e18190a68b7d400c99b386",
+        "android_client_info": {
+          "package_name": "com.delivery.admin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDuufd_GhpYr7sYzBZnXFUAxwbsyuBEhhY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,69 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'com.google.gms.google-services'
+}
+
+android {
+    compileSdkVersion 34
+    defaultConfig {
+        minSdkVersion 21
+        //noinspection OldTargetApi
+        targetSdkVersion 34
+        aaptOptions {
+            cruncherEnabled = false
+            // 압축 제외 규칙 (필요할 경우 사용)
+            // noCompress 'png', 'jpg'
+        }
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+        }
+        // test 관련 옵션 설정
+        testOptions {
+            unitTests {
+                includeAndroidResources = true
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = '11'
+    }
+    namespace 'com.delivery.admin'
+    // 빌드 설정
+    android.applicationVariants.configureEach { variant ->
+        variant.outputs.configureEach { output ->
+            // APK 파일명 커스텀 설정
+            def apkFileName = "Delivery-Admin.apk"
+            outputFileName = apkFileName
+        }
+    }
+}
+
+dependencies {
+    //noinspection GradleDependency
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.core:core-ktx:1.13.1'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    // Firebase BoM (Bill of Materials)
+    implementation platform('com.google.firebase:firebase-bom:33.3.0')
+
+    // Firebase Analytics 추가
+    implementation 'com.google.firebase:firebase-analytics'
+
+    // Firebase Messaging (푸시 알림) 추가
+    implementation 'com.google.firebase:firebase-messaging'
+    implementation 'androidx.work:work-runtime:2.9.1'
+
+    // Test dependencies
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+}
