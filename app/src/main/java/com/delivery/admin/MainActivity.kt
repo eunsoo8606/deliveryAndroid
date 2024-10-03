@@ -25,7 +25,7 @@ import androidx.core.content.ContextCompat.startActivity
 import com.google.firebase.messaging.FirebaseMessaging
 import java.net.URISyntaxException
 import android.Manifest
-
+import com.delivery.admin.utils.NotificationUtils
 
 
 class MainActivity : AppCompatActivity() {
@@ -48,6 +48,19 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // 앱이 처음 실행되었을 때만 인텐트 처리
+        if (savedInstanceState == null) {
+            handleIntent(intent)
+        }
+
+
+        // Android 13 이상에서 알림 권한 요청
+        checkNotificationPermission();
+        defalutSetting();
+    }
+
+
+    private fun defalutSetting(){
         // Android 13 이상에서 알림 권한 요청
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
@@ -71,17 +84,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Android 8.0 이상에서 알림 채널 설정
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                "default_channel_id",
-                "Default Channel",
-                NotificationManager.IMPORTANCE_DEFAULT
-            ).apply {
-                description = "기본 알림 채널"
-            }
-            val manager = getSystemService(NotificationManager::class.java)
-            manager?.createNotificationChannel(channel)
-        }
+        // 앱이 실행될 때 알림 채널을 생성
+        NotificationUtils.createNotificationChannel(
+            this,
+            "default_channel_id",
+            "Default Channel"
+        )
 
         // WebView 초기화
         webView = findViewById(R.id.webView)
@@ -107,51 +115,21 @@ class MainActivity : AppCompatActivity() {
         // ProgressDialog 설정
         progressDialog = ProgressDialog(this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT)
 
-        // 인텐트로부터 전달된 링크 확인 및 웹뷰에 로드
-        val link = intent.getStringExtra("link")
-        if (link != null) {
-            Log.d("MainActivity", "Loading Link in WebView: $link")
+        // 앱이 처음 실행되었을 때만 인텐트 처리
+
+        val link = intent?.getStringExtra("link")
+        if (!link.isNullOrEmpty()) {
+            Log.d("MainActivity", "Loading Link in WebView from onCreate: $link")
             webView.loadUrl(link)
         } else {
-            // 전달된 링크가 없으면 기본 URL 로드
+            Log.d("MainActivity", "No link found, loading default URL")
             webView.loadUrl(myURL)
         }
 
-        // WebViewClient를 설정하여 SSL 핸들링 및 JavaScript 실행 모두 처리
-        webView.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-                view.loadUrl(url)
-                return true
-            }
-
-            override fun onPageFinished(view: WebView, url: String) {
-                super.onPageFinished(view, url)
-                Log.d("WebView", "Page loaded: $url")
-
-                // HTML 문서가 로드된 후 JavaScript 실행
-                view.evaluateJavascript(
-                    """
-                document.addEventListener("DOMContentLoaded", function() {
-                    var toggledElement = document.querySelector('[data-toggled="open"]');
-                    if (toggledElement) {
-                        toggledElement.setAttribute('data-toggled', 'close');
-                    }
-                
-                    var overlayElement = document.getElementById('responsive-overlay');
-                    if (overlayElement) {
-                        overlayElement.style.display = 'none';
-                    }
-                });
-                """.trimIndent()
-                ) { result ->
-                    // 자바스크립트 실행 결과를 처리 (필요할 경우)
-                    Log.d("WebView", "JavaScript 실행 결과: $result")
-                }
-            }
-        }
 
         // WebChromeClient를 설정 (필요 시)
-        webView.webChromeClient = MyWebChromeClient()
+        webView.webViewClient = MyWebViewClient()  // 페이지 로딩 및 URL 관련 이벤트 처리
+        webView.webChromeClient = MyWebChromeClient()  // 자바스크립트 대화상자 및 브라우저 기능 처리
     }
 
 
@@ -160,6 +138,7 @@ class MainActivity : AppCompatActivity() {
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
+
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_NOTIFICATION_PERMISSION) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -201,6 +180,29 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         webView.pauseTimers()
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        setIntent(intent)  // 새로운 인텐트를 설정
+
+        // 기존 URL과 새로운 Intent의 URL이 다른 경우에만 처리
+        val newLink = intent?.getStringExtra("link")
+        if (newLink != null && newLink != myURL) {
+            Log.d("MainActivity", "New Intent Received with new link: $newLink")
+            handleIntent(intent)
+        } else {
+            Log.d("MainActivity", "동일한 링크가 전달되었거나 링크가 없음")
+        }
+    }
+
+
+    private fun handleIntent(intent: Intent?) {
+        val link = intent?.getStringExtra("link") ?: myURL
+        if (!link.isNullOrEmpty()) {
+            Log.d("MainActivity", "Received link: $link")
+            defalutSetting();
+        }
     }
 
     // WebViewClient 클래스 정의

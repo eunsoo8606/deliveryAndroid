@@ -42,6 +42,22 @@ android {
             outputFileName = apkFileName
         }
     }
+    signingConfigs {
+        release {
+            storeFile file("../my-release-key.jks") // 키스토어 파일 경로 설정 (프로젝트 루트 기준 경로)
+            storePassword "your-keystore-password" // 키스토어 비밀번호
+            keyAlias "my-alias"                     // 키 별칭
+            keyPassword "your-key-password"         // 키 비밀번호
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release   // release 빌드 시 서명 구성 적용
+            minifyEnabled false                    // 코드 난독화 사용 여부
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
 }
 
 dependencies {
