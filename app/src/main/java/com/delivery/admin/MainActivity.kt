@@ -26,7 +26,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import java.net.URISyntaxException
 import android.Manifest
 import com.delivery.admin.utils.NotificationUtils
-
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 
 class MainActivity : AppCompatActivity() {
 
@@ -42,6 +42,7 @@ class MainActivity : AppCompatActivity() {
     private var fcmToken: String? = null
     private var count = 1
     private val REQUEST_NOTIFICATION_PERMISSION = 1
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -126,6 +127,14 @@ class MainActivity : AppCompatActivity() {
             webView.loadUrl(myURL)
         }
 
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
+
+
+        // SwipeRefreshLayout 새로고침 리스너 설정
+        swipeRefreshLayout.setOnRefreshListener {
+            webView.reload()  // WebView 새로고침
+            swipeRefreshLayout.isRefreshing = false  // 새로고침 애니메이션 종료
+        }
 
         // WebChromeClient를 설정 (필요 시)
         webView.webViewClient = MyWebViewClient()  // 페이지 로딩 및 URL 관련 이벤트 처리
@@ -254,7 +263,7 @@ class MainActivity : AppCompatActivity() {
             myURL = url ?: ""
 
             // ProgressDialog 표시
-            progressDialog.setTitle("제목")
+            progressDialog.setTitle("")
             progressDialog.setMessage("Loading")
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER)
             progressDialog.setCancelable(true)
@@ -266,6 +275,9 @@ class MainActivity : AppCompatActivity() {
         override fun onPageFinished(view: WebView?, url: String?) {
             super.onPageFinished(view, url)
             progressDialog.dismiss()
+
+            // WebView에서 JavaScript 함수 호출
+            view?.evaluateJavascript("menuClose();", null)
 
             myURL = url ?: ""
 

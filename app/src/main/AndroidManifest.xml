@@ -22,8 +22,7 @@
         tools:replace="label, icon"
         android:theme="@style/Theme.MyApplication">
 
-
-    <!-- SplashActivity 설정 -->
+        <!-- SplashActivity 설정 -->
         <activity
             android:name="com.delivery.admin.SplashActivity"
             android:exported="true">
@@ -51,10 +50,6 @@
                 <!-- 기존 커스텀 액션 -->
                 <action android:name="OPEN_LINK_ACTIVITY" />
                 <category android:name="android.intent.category.DEFAULT" />
-
-                <!-- 기본 런처 액션 추가 -->
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 

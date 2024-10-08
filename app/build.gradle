@@ -10,6 +10,9 @@ android {
         minSdkVersion 21
         //noinspection OldTargetApi
         targetSdkVersion 34
+        versionCode 1  // 필수 설정: 버전 코드
+        versionName "1.0"  // 필수 설정: 버전 이름
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
             cruncherEnabled = false
             // 압축 제외 규칙 (필요할 경우 사용)
@@ -25,6 +28,7 @@ android {
             }
         }
     }
+
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
@@ -44,10 +48,10 @@ android {
     }
     signingConfigs {
         release {
-            storeFile file("../my-release-key.jks") // 키스토어 파일 경로 설정 (프로젝트 루트 기준 경로)
-            storePassword "your-keystore-password" // 키스토어 비밀번호
-            keyAlias "my-alias"                     // 키 별칭
-            keyPassword "your-key-password"         // 키 비밀번호
+            storeFile file("../delivery-admin.jks") // 키스토어 파일 경로 설정 (프로젝트 루트 기준 경로)
+            storePassword "tkfkd8606!" // 키스토어 비밀번호
+            keyAlias "delivery"                     // 키 별칭
+            keyPassword "tkfkd8606!"         // 키 비밀번호
         }
     }
 
@@ -67,7 +71,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'com.google.android.material:material:1.12.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     // Firebase BoM (Bill of Materials)
     implementation platform('com.google.firebase:firebase-bom:33.3.0')
 
